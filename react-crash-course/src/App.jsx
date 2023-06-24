@@ -5,7 +5,7 @@ import Expenses from './components/Expenses/Expenses';
 import NewExpense from './components/NewExpense/NewExpense';
 
 const App = () => {
-  const expenses = [
+  const expensesA = [
     {
       id: 'e1',
       date: new Date(2021, 1, 28),
@@ -25,11 +25,13 @@ const App = () => {
       amount: 333,
     },
   ];
+  const [expenses, setExpenses] = useState(expensesA);
 
   const addExpenseHandler = expense => {
     console.log('In App.js');
     expenses.push(expense);
     console.log(expenses);
+    setExpenses(expenses);
   };
 
   return (
