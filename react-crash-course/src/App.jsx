@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import './App.css';
 import Expenses from './components/Expenses/Expenses';
@@ -25,9 +25,16 @@ const App = () => {
       amount: 333,
     },
   ];
+
+  const addExpenseHandler = expense => {
+    console.log('In App.js');
+    expenses.push(expense);
+    console.log(expenses);
+  };
+
   return (
     <div>
-      <NewExpense />
+      <NewExpense onAddExpense={addExpenseHandler} />
       <Expenses items={expenses} />
     </div>
   );
