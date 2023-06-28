@@ -1,14 +1,15 @@
 import React from 'react';
 
 import UserItem from './UserItem';
+import Card from './UI/Card';
 
 const UsersList = ({ users }) => {
   return (
-    <div>
+    <Card>
       {users.map(user => {
         return <UserItem key={user.id} user={user} />;
       })}
-    </div>
+    </Card>
   );
 };
 
