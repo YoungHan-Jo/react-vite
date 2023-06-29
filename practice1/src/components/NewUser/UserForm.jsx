@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { UserAtom } from '../../recoil/UserAtom';
 
-const UserForm = ({ onSubmit }) => {
+const UserForm = () => {
+  const setUsers = useSetRecoilState(UserAtom);
   const [enteredUsername, setEnteredUsername] = useState('');
   const [enteredAge, setEnteredAge] = useState('');
 
@@ -19,7 +22,9 @@ const UserForm = ({ onSubmit }) => {
       name: enteredUsername,
       age: enteredAge,
     };
-    onSubmit(user);
+    setUsers(prev => {
+      return [...prev, user];
+    });
     setEnteredUsername('');
     setEnteredAge('');
   };
