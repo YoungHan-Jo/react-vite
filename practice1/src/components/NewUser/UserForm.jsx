@@ -6,7 +6,7 @@ import Button from '../UI/Button';
 import { AddUserErrorAtom } from '../../recoil/AddUserErrorAtom';
 
 const UserForm = () => {
-  // 単純に、値を取るぐらいなら、useRefを使うと便利
+  // 単純に、値を取るぐらいなら、NativeDOMにアクセスできるuseRefを使うと便利
   // refでアクセスすることを、Reactに制御されてないコンポーネントという
   const nameInputRef = useRef();
   const ageInputRef = useRef();
