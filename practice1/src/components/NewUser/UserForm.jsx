@@ -1,22 +1,41 @@
-import React, { useState } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import React, { useRef } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { UserAtom } from '../../recoil/UserAtom';
 
+import Button from '../UI/Button';
+import { AddUserErrorAtom } from '../../recoil/AddUserErrorAtom';
+
 const UserForm = () => {
+  // 単純に、値を取るぐらいなら、NativeDOMにアクセスできるuseRefを使うと便利
+  // refでアクセスすることを、Reactに制御されてないコンポーネントという
+  const nameInputRef = useRef();
+  const ageInputRef = useRef();
+
   const setUsers = useSetRecoilState(UserAtom);
-  const [enteredUsername, setEnteredUsername] = useState('');
-  const [enteredAge, setEnteredAge] = useState('');
+  const setAddUserError = useSetRecoilState(AddUserErrorAtom);
 
-  const changeUsernameHandler = event => {
-    setEnteredUsername(event.target.value);
-  };
-
-  const changeAgeHandler = event => {
-    setEnteredAge(event.target.value);
-  };
-
-  const submitHandler = event => {
+  const addUserHandler = event => {
     event.preventDefault();
+    const enteredUsername = nameInputRef.current.value;
+    const enteredAge = ageInputRef.current.value;
+
+    if (enteredUsername.trim().length === 0 || enteredAge.trim().length === 0) {
+      setAddUserError({
+        isWrong: true,
+        title: 'Invalid input',
+        message: 'Please enter a valid name and age (non-empty values).',
+      });
+      return;
+    }
+    if (+enteredAge < 1) {
+      setAddUserError({
+        isWrong: true,
+        title: 'Invalid age',
+        message: 'Please enter a valid age (> 0).',
+      });
+      return;
+    }
+
     const user = {
       id: Math.random().toString(),
       name: enteredUsername,
@@ -25,30 +44,20 @@ const UserForm = () => {
     setUsers(prev => {
       return [...prev, user];
     });
-    setEnteredUsername('');
-    setEnteredAge('');
+    nameInputRef.current.value = '';
+    ageInputRef.current.value = '';
   };
   return (
-    <form onSubmit={submitHandler}>
+    <form onSubmit={addUserHandler}>
       <div>
         <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          value={enteredUsername}
-          id="username"
-          onChange={changeUsernameHandler}
-        />
+        <input type="text" id="username" ref={nameInputRef} />
       </div>
       <div>
         <label htmlFor="age">Age (Years)</label>
-        <input
-          type="number"
-          value={enteredAge}
-          id="age"
-          onChange={changeAgeHandler}
-        />
+        <input type="number" id="age" ref={ageInputRef} />
       </div>
-      <button type="submit">Add User</button>
+      <Button type="submit">Add User</Button>
     </form>
   );
 };

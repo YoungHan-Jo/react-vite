@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import NewUser from './components/NewUser/NewUser';
-import UsersList from './components/UsersList';
 import './App.css';
+import NewUser from './components/NewUser/NewUser';
+import UsersList from './components/Users/UsersList';
 
 function App() {
   return (
