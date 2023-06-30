@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { UserAtom } from '../../recoil/UserAtom';
 
@@ -6,22 +6,18 @@ import Button from '../UI/Button';
 import { AddUserErrorAtom } from '../../recoil/AddUserErrorAtom';
 
 const UserForm = () => {
+  // 単純に、値を取るぐらいなら、useRefを使うと便利
+  // refでアクセスすることを、Reactに制御されてないコンポーネントという
+  const nameInputRef = useRef();
+  const ageInputRef = useRef();
+
   const setUsers = useSetRecoilState(UserAtom);
   const setAddUserError = useSetRecoilState(AddUserErrorAtom);
 
-  const [enteredUsername, setEnteredUsername] = useState('');
-  const [enteredAge, setEnteredAge] = useState('');
-
-  const changeUsernameHandler = event => {
-    setEnteredUsername(event.target.value);
-  };
-
-  const changeAgeHandler = event => {
-    setEnteredAge(event.target.value);
-  };
-
   const addUserHandler = event => {
     event.preventDefault();
+    const enteredUsername = nameInputRef.current.value;
+    const enteredAge = ageInputRef.current.value;
 
     if (enteredUsername.trim().length === 0 || enteredAge.trim().length === 0) {
       setAddUserError({
@@ -48,28 +44,18 @@ const UserForm = () => {
     setUsers(prev => {
       return [...prev, user];
     });
-    setEnteredUsername('');
-    setEnteredAge('');
+    nameInputRef.current.value = '';
+    ageInputRef.current.value = '';
   };
   return (
     <form onSubmit={addUserHandler}>
       <div>
         <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          value={enteredUsername}
-          id="username"
-          onChange={changeUsernameHandler}
-        />
+        <input type="text" id="username" ref={nameInputRef} />
       </div>
       <div>
         <label htmlFor="age">Age (Years)</label>
-        <input
-          type="number"
-          value={enteredAge}
-          id="age"
-          onChange={changeAgeHandler}
-        />
+        <input type="number" id="age" ref={ageInputRef} />
       </div>
       <Button type="submit">Add User</Button>
     </form>
