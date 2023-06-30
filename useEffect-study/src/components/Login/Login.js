@@ -27,10 +27,7 @@ const passwordReducer = (state, action) => {
 };
 
 const Login = props => {
-  // const [enteredEmail, setEnteredEmail] = useState('');
-  // const [emailIsValid, setEmailIsValid] = useState();
-  // const [enteredPassword, setEnteredPassword] = useState('');
-  // const [passwordIsValid, setPasswordIsValid] = useState();
+  // =======useReducer使用　start=======
   const [formIsValid, setFormIsValid] = useState(false);
 
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
@@ -70,8 +67,9 @@ const Login = props => {
     event.preventDefault();
     props.onLogin(emailState.value, passwordState.value);
   };
+  // ======useReducer使用　end=======
 
-  // // useEffect使用　start
+  // // ==========useEffect使用　start==========
   // const [enteredEmail, setEnteredEmail] = useState('');
   // const [emailIsValid, setEmailIsValid] = useState();
   // const [enteredPassword, setEnteredPassword] = useState('');
@@ -113,7 +111,7 @@ const Login = props => {
   //   event.preventDefault();
   //   props.onLogin(enteredEmail, enteredPassword);
   // };
-  // // useEffect使用　end
+  // // =========useEffect使用　end==========
 
   return (
     <Card className={classes.login}>
