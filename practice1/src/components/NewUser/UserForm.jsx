@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { UserAtom } from '../../recoil/UserAtom';
+
+import Button from '../UI/Button';
+import { AddUserErrorAtom } from '../../recoil/AddUserErrorAtom';
 
 const UserForm = () => {
   const setUsers = useSetRecoilState(UserAtom);
+  const setAddUserError = useSetRecoilState(AddUserErrorAtom);
+
   const [enteredUsername, setEnteredUsername] = useState('');
   const [enteredAge, setEnteredAge] = useState('');
 
@@ -15,8 +20,26 @@ const UserForm = () => {
     setEnteredAge(event.target.value);
   };
 
-  const submitHandler = event => {
+  const addUserHandler = event => {
     event.preventDefault();
+
+    if (enteredUsername.trim().length === 0 || enteredAge.trim().length === 0) {
+      setAddUserError({
+        isWrong: true,
+        title: 'Invalid input',
+        message: 'Please enter a valid name and age (non-empty values).',
+      });
+      return;
+    }
+    if (+enteredAge < 1) {
+      setAddUserError({
+        isWrong: true,
+        title: 'Invalid age',
+        message: 'Please enter a valid age (> 0).',
+      });
+      return;
+    }
+
     const user = {
       id: Math.random().toString(),
       name: enteredUsername,
@@ -29,7 +52,7 @@ const UserForm = () => {
     setEnteredAge('');
   };
   return (
-    <form onSubmit={submitHandler}>
+    <form onSubmit={addUserHandler}>
       <div>
         <label htmlFor="username">Username</label>
         <input
@@ -48,7 +71,7 @@ const UserForm = () => {
           onChange={changeAgeHandler}
         />
       </div>
-      <button type="submit">Add User</button>
+      <Button type="submit">Add User</Button>
     </form>
   );
 };

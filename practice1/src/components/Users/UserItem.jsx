@@ -1,8 +1,8 @@
 import React from 'react';
 
-import styles from './UserItem.module.css';
+import classes from './UserItem.module.css';
 import { useSetRecoilState } from 'recoil';
-import { UserAtom } from '../recoil/UserAtom';
+import { UserAtom } from '../../recoil/UserAtom';
 
 const UserItem = ({ user }) => {
   const setUsers = useSetRecoilState(UserAtom);
@@ -14,11 +14,11 @@ const UserItem = ({ user }) => {
     });
   };
   return (
-    <div id={user.id} className={styles.userItem} onClick={clickDeleteHandler}>
+    <li id={user.id} className={classes.userItem} onClick={clickDeleteHandler}>
       <h3>
         {user.name} ({user.age} years old)
       </h3>
-    </div>
+    </li>
   );
 };
 
