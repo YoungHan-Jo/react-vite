@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, useRef } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
+import Input from '../UI/Input/Input';
 
 // reducer functionは、componentの中で作られたどんなデータも要らないので、componentの外で作られる。
 const emailReducer = (state, action) => {
@@ -28,7 +29,7 @@ const passwordReducer = (state, action) => {
 
 const Login = props => {
   // =======useReducer使用　start=======
-  const [formIsValid, setFormIsValid] = useState(false);
+  const [formIsValid, setFormIsValid] = useState(false); // form有効性を他のstateから導出してるから、最新のstateじゃない可能性もある。＝＞ useEffectで解決できる。
 
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
     value: '',
@@ -40,16 +41,32 @@ const Login = props => {
     isValid: null,
   });
 
+  const emailInputRef = useRef();
+  const passwordInputRef = useRef();
+
+  // 最初のrenderの時は変わってと認識して、useEffectが実行される。
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      // console.log('Checking form validity!');
+      setFormIsValid(emailState.isValid && passwordState.isValid);
+    }, 500);
+
+    // cleanup functionは、次のeffectが実行される前に実行される。
+    return () => {
+      // console.log('EFFECT CLEANUP');
+      clearTimeout(identifier); // 直前のtimeoutをclearする。=> 最終的には、最後のtimeoutだけが実行される。
+    };
+  }, [emailState.isValid, passwordState.isValid]); // このdependency arrayが変わった時だけ実行される。
+  // formIsValidは　emailStateとpasswordStateのisvalidだけ必要
+
   const emailChangeHandler = event => {
     dispatchEmail({ type: 'USER_INPUT', val: event.target.value }); // dispatchは、action objectを受け取る。
 
-    setFormIsValid(event.target.value.includes('@') && passwordState.isValid);
+    // setFormIsValid(event.target.value.includes('@') && passwordState.isValid);
   };
 
   const passwordChangeHandler = event => {
     dispatchPassword({ type: 'PASSWORD_INPUT', val: event.target.value });
-
-    setFormIsValid(emailState.isValid && event.target.value.trim().length > 6);
   };
 
   const validateEmailHandler = () => {
@@ -59,93 +76,45 @@ const Login = props => {
   };
 
   const validatePasswordHandler = () => {
-    // setPasswordIsValid(enteredPassword.trim().length > 6);
     dispatchPassword({ type: 'PASSWORD_BLUR' });
   };
 
   const submitHandler = event => {
     event.preventDefault();
-    props.onLogin(emailState.value, passwordState.value);
+    if (formIsValid) {
+      props.onLogin(emailState.value, passwordState.value);
+    } else if (!emailState.isValid) {
+      emailInputRef.current.focus();
+    } else {
+      passwordInputRef.current.focus();
+    }
   };
-  // ======useReducer使用　end=======
-
-  // // ==========useEffect使用　start==========
-  // const [enteredEmail, setEnteredEmail] = useState('');
-  // const [emailIsValid, setEmailIsValid] = useState();
-  // const [enteredPassword, setEnteredPassword] = useState('');
-  // const [passwordIsValid, setPasswordIsValid] = useState();
-  // const [formIsValid, setFormIsValid] = useState(false);
-
-  // useEffect(() => {
-  //   const identifier = setTimeout(() => {
-  //     // console.log('Checking form validity!');
-  //     setFormIsValid(
-  //       enteredEmail.includes('@') && enteredPassword.trim().length > 6,
-  //     );
-  //   }, 500);
-
-  //   // cleanup functionは、次のeffectが実行される前に実行される。
-  //   return () => {
-  //     // console.log('CLEANUP');
-  //     clearTimeout(identifier); // 直前のtimeoutをclearする。=> 最終的には、最後のtimeoutだけが実行される。
-  //   };
-  // }, [enteredEmail, enteredPassword]); // このdependency arrayが変わった時だけ実行される。
-
-  // const emailChangeHandler = event => {
-  //   setEnteredEmail(event.target.value);
-  // };
-
-  // const passwordChangeHandler = event => {
-  //   setEnteredPassword(event.target.value);
-  // };
-
-  // const validateEmailHandler = () => {
-  //   setEmailIsValid(enteredEmail.includes('@'));
-  // };
-
-  // const validatePasswordHandler = () => {
-  //   setPasswordIsValid(enteredPassword.trim().length > 6);
-  // };
-
-  // const submitHandler = event => {
-  //   event.preventDefault();
-  //   props.onLogin(enteredEmail, enteredPassword);
-  // };
-  // // =========useEffect使用　end==========
 
   return (
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
-        <div
-          className={`${classes.control} ${
-            emailState.isValid === false ? classes.invalid : ''
-          }`}
-        >
-          <label htmlFor="email">E-Mail</label>
-          <input
-            type="email"
-            id="email"
-            value={emailState.value}
-            onChange={emailChangeHandler}
-            onBlur={validateEmailHandler}
-          />
-        </div>
-        <div
-          className={`${classes.control} ${
-            passwordState.isValid === false ? classes.invalid : ''
-          }`}
-        >
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={passwordState.value}
-            onChange={passwordChangeHandler}
-            onBlur={validatePasswordHandler}
-          />
-        </div>
+        <Input
+          ref={emailInputRef}
+          id="email"
+          label="E-Mail"
+          type="email"
+          isValid={emailState.isValid}
+          value={emailState.value}
+          onChange={emailChangeHandler}
+          onBlur={validateEmailHandler}
+        />
+        <Input
+          ref={passwordInputRef}
+          id="password"
+          label="Password"
+          type="password"
+          isValid={passwordState.isValid}
+          value={passwordState.value}
+          onChange={passwordChangeHandler}
+          onBlur={validatePasswordHandler}
+        />
         <div className={classes.actions}>
-          <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+          <Button type="submit" className={classes.btn}>
             Login
           </Button>
         </div>
