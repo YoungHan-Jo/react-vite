@@ -10,6 +10,7 @@ const Input = React.forwardRef((props, ref) => {
     inputRef.current.focus();
   };
 
+  // useImperativeHandleはできれば使わない方がいい。=> Inputのfocusなどは使ってもいい。
   // funcionを外部で使えるようにする。
   useImperativeHandle(ref, () => {
     return {
