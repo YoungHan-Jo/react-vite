@@ -4,9 +4,13 @@ import classes from './Cart.module.css';
 import Modal from '../UI/Modal/Modal';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { ShowCartModalAtom } from '../../recoil/ShowCartModalAtom';
+import { CartAtom, CartTotalSelector } from '../../recoil/CartAtom';
+import CartItem from './CartItem';
 
 const Cart = () => {
   const setShowCartModal = useSetRecoilState(ShowCartModalAtom);
+  const cartTotalAmount = useRecoilValue(CartTotalSelector);
+  const carts = useRecoilValue(CartAtom);
 
   const closeCartModalHandler = () => {
     setShowCartModal({ isShow: false });
@@ -14,9 +18,9 @@ const Cart = () => {
 
   const cartItems = (
     <ul className={classes['cart-items']}>
-      {[{ id: 'c1', name: 'Sushi', amount: 2, price: 12.99 }].map(item => (
-        <li>{item.name}</li>
-      ))}
+      {carts.map(cart => {
+        return <CartItem key={cart.id} {...cart} />;
+      })}
     </ul>
   );
 
@@ -25,7 +29,7 @@ const Cart = () => {
       {cartItems}
       <div className={classes.total}>
         <span>Total Amount</span>
-        <span>35.62</span>
+        <span>{cartTotalAmount}</span>
       </div>
       <div className={classes.actions}>
         <button

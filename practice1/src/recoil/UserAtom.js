@@ -5,8 +5,8 @@ export const UserAtom = atom({
   default: [],
 });
 
-export const userCountSelector = selector({
-  key: 'userCountSelector',
+export const UserCountSelector = selector({
+  key: 'UserCountSelector',
   get: ({ get }) => {
     const users = get(UserAtom);
     return users.length;
