@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useRecoilValue } from 'recoil';
-import { UserAtom, userCountSelector } from '../../recoil/UserAtom';
+import { UserAtom, UserCountSelector } from '../../recoil/UserAtom';
 import Card from '../UI/Card';
 import UserItem from './UserItem';
 
@@ -9,7 +9,7 @@ import classes from './UsersList.module.css';
 
 const UsersList = () => {
   const users = useRecoilValue(UserAtom);
-  const userCount = useRecoilValue(userCountSelector);
+  const userCount = useRecoilValue(UserCountSelector);
 
   return (
     <Card className={classes.users}>
