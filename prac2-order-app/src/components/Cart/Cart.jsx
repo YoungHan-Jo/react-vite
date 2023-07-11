@@ -29,7 +29,7 @@ const Cart = () => {
       {cartItems}
       <div className={classes.total}>
         <span>Total Amount</span>
-        <span>{cartTotalAmount}</span>
+        <span>${cartTotalAmount.toFixed(2)}</span>
       </div>
       <div className={classes.actions}>
         <button
