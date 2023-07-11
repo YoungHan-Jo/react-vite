@@ -2,14 +2,14 @@ import { atom, selector } from 'recoil';
 
 export const CartAtom = atom({
   key: 'CartAtom',
-  default: [{ id: 'c1', name: 'Sushi', amount: 2, price: 12.99 }],
+  default: [],
 });
 
 export const CartCountSelector = selector({
   key: 'CartCountSelector',
   get: ({ get }) => {
     const carts = get(CartAtom);
-    return carts.length;
+    return carts.reduce((count, cart) => count + cart.amount, 0);
   },
 });
 
